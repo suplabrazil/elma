@@ -10,8 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Stripe.js - Biblioteca de pagamento -->
-    <script src="https://js.stripe.com/v3/"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -80,6 +78,31 @@
             width: 256px; /* Equivalente a w-64 */
             height: 256px; /* Mantém a proporção quadrada */
             object-fit: cover; /* Recorta a imagem para cobrir o espaço sem distorcer */
+        }
+        /* Estilos para o botão flutuante do WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 100;
+            transition: transform 0.2s ease-in-out;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+        .whatsapp-float img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -221,25 +244,13 @@
 
             <!-- Total price section -->
             <div class="bg-gray-50 p-6 rounded-2xl shadow-inner max-w-md mx-auto mt-8">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-lg font-bold text-brown-custom">Total:</span>
-                    <span id="total-price" class="text-lg font-bold text-brown-custom">R$81,48</span>
-                </div>
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="pix-discount" class="h-4 w-4 rounded-md text-brown-custom border-gray-300 focus:ring-brown-custom">
-                        <label for="pix-discount" class="text-sm text-gray-700 font-medium">10% de desconto no Pix</label>
-                    </div>
-                    <div class="text-sm font-bold text-green-600">Economize R$<span id="total-saved-amount">8,15</span></div>
-                </div>
                 <div class="flex justify-between items-center bg-gray-200 p-3 rounded-xl">
-                    <span class="text-lg font-bold text-brown-custom">Valor com desconto:</span>
-                    <span id="final-price" class="text-2xl font-bold text-brown-custom">R$73,33</span>
+                    <span class="text-lg font-bold text-brown-custom">Valor Total:</span>
+                    <span id="final-price" class="text-2xl font-bold text-brown-custom">R$81,48</span>
                 </div>
-                <!-- BOTÃO DE COMPRA ATUALIZADO -->
-                <button id="checkout-button" class="block w-full px-10 py-4 mt-6 bg-green-600 text-white font-bold rounded-full shadow-lg transition duration-300 ease-in-out hover:bg-green-700 transform hover:scale-105">Comprar agora →</button>
+                <button id="checkout-button" class="block w-full px-10 py-4 mt-6 bg-green-600 text-white font-bold rounded-full shadow-lg transition duration-300 ease-in-out hover:bg-green-700 transform hover:scale-105">Finalizar Pedido →</button>
                 <p class="text-xs text-center mt-4 font-semibold text-gray-600">
-                    Após o pagamento, entraremos em contato para mais informações sobre as fotos para a sua miniatura.
+                    O pagamento e o envio das fotos serão combinados pelo WhatsApp.
                 </p>
             </div>
         </section>
@@ -253,13 +264,13 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
                 <div class="p-6 bg-white rounded-xl shadow-lg">
                     <div class="text-4xl font-bold mb-2 text-brown-light">1.</div>
-                    <h3 class="text-xl font-semibold mb-2">Escolha e Compre</h3>
-                    <p>Selecione quantas esculturas deseja e finalize sua compra com segurança.</p>
+                    <h3 class="text-xl font-semibold mb-2">Escolha e Inicie o Pedido</h3>
+                    <p>Selecione quantas esculturas deseja e inicie seu pedido com segurança.</p>
                 </div>
                 <div class="p-6 bg-white rounded-xl shadow-lg">
                     <div class="text-4xl font-bold mb-2 text-brown-light">2.</div>
-                    <h3 class="text-xl font-semibold mb-2">Envie sua Foto</h3>
-                    <p>Entraremos em contato por e-mail para que você envie as fotos de referência.</p>
+                    <h3 class="text-xl font-semibold mb-2">Contato via WhatsApp</h3>
+                    <p>Você será direcionado para o WhatsApp para combinar o pagamento e o envio das fotos.</p>
                 </div>
                 <div class="p-6 bg-white rounded-xl shadow-lg">
                     <div class="text-4xl font-bold mb-2 text-brown-light">3.</div>
@@ -482,6 +493,39 @@
         </div>
     </footer>
 
+    <!-- Botão flutuante do WhatsApp -->
+    <a href="https://wa.me/55981165843" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+        <img src="https://iili.io/KJB9x6X.webp" alt="Contato por WhatsApp" />
+    </a>
+
+    <!-- NOVO: Modal para coletar informações do cliente -->
+    <div id="user-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-brown-custom">Quase lá!</h2>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-gray-700 mb-6">Por favor, preencha seus dados para continuar o pedido no WhatsApp.</p>
+            <form id="user-info-form">
+                <div class="mb-4">
+                    <label for="user-name" class="block text-brown-custom font-semibold mb-2">Nome Completo</label>
+                    <input type="text" id="user-name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brown-custom focus:border-brown-custom" required>
+                </div>
+                <div class="mb-6">
+                    <label for="user-email" class="block text-brown-custom font-semibold mb-2">Email</label>
+                    <input type="email" id="user-email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brown-custom focus:border-brown-custom" required>
+                </div>
+                <button type="submit" id="submit-whatsapp-btn" class="w-full px-10 py-4 bg-green-600 text-white font-bold rounded-full shadow-lg transition duration-300 ease-in-out hover:bg-green-700 transform hover:scale-105">
+                    Enviar Pedido para o WhatsApp →
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Função para formatar o número como moeda brasileira
         function formatCurrency(value) {
@@ -489,82 +533,70 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- INÍCIO DA LÓGICA DE PAGAMENTO STRIPE ---
+            // --- REMOVIDO: Lógica do Stripe ---
 
-            // 1. Inicializa o Stripe com sua chave publicável
-            const stripe = Stripe('pk_test_51RzMLu9ShBuhFtTZLMLi1E6HwwYQesovV4J11V1DmWKtQYVNwzq7tYcXhHvripYUyv6b0FOcRkKLS49j85FLleFk00Xan9B5QY');
             const checkoutButton = document.getElementById('checkout-button');
-
-            // 2. Adiciona um "ouvinte" para o clique no botão de comprar
-            checkoutButton.addEventListener('click', async () => {
-                const selectedOption = document.querySelector('.pricing-option.selected');
-                if (!selectedOption) {
-                    // Substitui o alert por uma mensagem mais amigável no console
-                    console.error("Por favor, selecione uma opção de preço.");
-                    return;
-                }
-
-                const quantity = parseInt(selectedOption.dataset.quantity, 10);
-                const price = parseFloat(selectedOption.dataset.price);
-                const productName = `${quantity} Escultura(s) Personalizada(s)`;
-
-                // 3. Faz uma requisição para o seu servidor (backend)
-                try {
-                    const response = await fetch('/create-checkout-session', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            quantity: quantity,
-                            price: price / quantity, // Envia o preço unitário
-                            productName: productName
-                        }),
-                    });
-
-                    const session = await response.json();
-
-                    if(session.id) {
-                        // 4. Redireciona o cliente para a página de pagamento do Stripe
-                        const result = await stripe.redirectToCheckout({ sessionId: session.id });
-                        if (result.error) {
-                            // Se houver um erro, exibe no console
-                            console.error(result.error.message);
-                        }
-                    } else {
-                        console.error('Falha ao obter o ID da sessão do servidor.');
-                    }
-                } catch (error) {
-                    console.error('Erro ao conectar com o servidor:', error);
-                }
-            });
-
-            // --- FIM DA LÓGICA DE PAGAMENTO STRIPE ---
-
-
-            // Script para a calculadora de preços (seu código original)
             const pricingOptions = document.querySelectorAll('.pricing-option');
-            const pixDiscountCheckbox = document.getElementById('pix-discount');
-            const totalPriceElement = document.getElementById('total-price');
-            const totalSavedAmountElement = document.getElementById('total-saved-amount');
             const finalPriceElement = document.getElementById('final-price');
+            
+            // --- NOVO: Elementos do Modal ---
+            const userInfoModal = document.getElementById('user-info-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const userInfoForm = document.getElementById('user-info-form');
+            const userNameInput = document.getElementById('user-name');
+            const userEmailInput = document.getElementById('user-email');
 
+            // Função para atualizar o preço total
             const updatePrices = () => {
                 const selectedOption = document.querySelector('.pricing-option.selected');
                 if (!selectedOption) return;
-
                 let price = parseFloat(selectedOption.dataset.price);
-                let discountAmount = 0;
-                if (pixDiscountCheckbox.checked) {
-                    discountAmount = price * 0.10;
-                }
-                const finalPrice = price - discountAmount;
-                
-                totalPriceElement.textContent = formatCurrency(price);
-                finalPriceElement.textContent = formatCurrency(finalPrice);
-                totalSavedAmountElement.textContent = formatCurrency(discountAmount).replace('R$', '').trim();
+                finalPriceElement.textContent = formatCurrency(price);
             };
 
+            // Evento para abrir o modal ao clicar em "Finalizar Pedido"
+            checkoutButton.addEventListener('click', () => {
+                userInfoModal.classList.remove('hidden');
+            });
+
+            // Eventos para fechar o modal
+            closeModalBtn.addEventListener('click', () => {
+                userInfoModal.classList.add('hidden');
+            });
+            userInfoModal.addEventListener('click', (event) => {
+                if (event.target === userInfoModal) {
+                    userInfoModal.classList.add('hidden');
+                }
+            });
+
+            // Evento para enviar o formulário e redirecionar para o WhatsApp
+            userInfoForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Impede o envio padrão do formulário
+
+                const selectedOption = document.querySelector('.pricing-option.selected');
+                if (!selectedOption) {
+                    console.error("Erro: Nenhuma opção de preço selecionada.");
+                    return;
+                }
+                
+                // Coleta todos os dados
+                const quantity = parseInt(selectedOption.dataset.quantity, 10);
+                const finalPriceText = finalPriceElement.textContent;
+                const productName = quantity > 1 ? `${quantity} Esculturas` : `${quantity} Escultura`;
+                const userName = userNameInput.value;
+                const userEmail = userEmailInput.value;
+
+                // Monta a mensagem final
+                const message = `*Novo Pedido Criado*\n\n*Produto:* ${productName}\n*Valor:* ${finalPriceText}\n\n*Dados do Cliente*\n*Nome:* ${userName}\n*Email:* ${userEmail}`;
+                
+                const whatsappUrl = `https://wa.me/55981165843?text=${encodeURIComponent(message)}`;
+                
+                // Abre o link do WhatsApp e esconde o modal
+                window.open(whatsappUrl, '_blank');
+                userInfoModal.classList.add('hidden');
+            });
+
+            // Lógica original para seleção de preço
             pricingOptions.forEach(option => {
                 option.addEventListener('click', () => {
                     pricingOptions.forEach(opt => opt.classList.remove('selected'));
@@ -572,15 +604,13 @@
                     updatePrices();
                 });
             });
-
-            pixDiscountCheckbox.addEventListener('change', updatePrices);
             
             if(pricingOptions.length > 0) {
                 pricingOptions[0].classList.add('selected');
             }
             updatePrices();
 
-            // Script para navegação da galeria (seu código original)
+            // Lógica original da galeria
             const setupGallery = (galleryId, prevBtnId, nextBtnId) => {
                 const gallery = document.getElementById(galleryId);
                 const prevBtn = document.getElementById(prevBtnId);
